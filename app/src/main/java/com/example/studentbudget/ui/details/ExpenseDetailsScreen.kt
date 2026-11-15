@@ -19,7 +19,7 @@ import com.example.studentbudget.data.Expense
 import com.example.studentbudget.ui.expenses.formatTenge
 
 @Composable
-internal fun ExpenseDetailsScreen(expense: Expense, onBack: () -> Unit) {
+internal fun ExpenseDetailsScreen(expense: Expense?, onBack: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -28,9 +28,13 @@ internal fun ExpenseDetailsScreen(expense: Expense, onBack: () -> Unit) {
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(expense.title, style = MaterialTheme.typography.headlineMedium)
-        Text(expense.category.displayName, style = MaterialTheme.typography.bodyLarge)
-        Text(formatTenge(expense.amount.toLong()), style = MaterialTheme.typography.titleLarge)
+        if (expense == null) {
+            Text(stringResource(R.string.expense_not_found), style = MaterialTheme.typography.headlineMedium)
+        } else {
+            Text(expense.title, style = MaterialTheme.typography.headlineMedium)
+            Text(expense.category.displayName, style = MaterialTheme.typography.bodyLarge)
+            Text(formatTenge(expense.amount.toLong()), style = MaterialTheme.typography.titleLarge)
+        }
         OutlinedButton(onClick = onBack) {
             Text(stringResource(R.string.back))
         }
