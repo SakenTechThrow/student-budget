@@ -7,19 +7,19 @@ import org.junit.Test
 class ExpenseInputTest {
     @Test
     fun acceptsWholeAmounts() {
-        assertEquals(1500.0, parseExpenseAmount("1500")!!, 0.0)
+        assertEquals(1500, parseExpenseAmount("1500"))
     }
 
     @Test
-    fun acceptsDecimalPointAndComma() {
-        assertEquals(1500.50, parseExpenseAmount("1500.50")!!, 0.0)
-        assertEquals(1500.50, parseExpenseAmount("1500,50")!!, 0.0)
-        assertEquals(0.01, parseExpenseAmount("0.01")!!, 0.0)
+    fun rejectsFractionalAmounts() {
+        listOf("1500.50", "1500,50", "0.01").forEach {
+            assertNull(it, parseExpenseAmount(it))
+        }
     }
 
     @Test
     fun trimsSurroundingSpaces() {
-        assertEquals(1500.0, parseExpenseAmount(" 1500 ")!!, 0.0)
+        assertEquals(1500, parseExpenseAmount(" 1500 "))
     }
 
     @Test
@@ -37,6 +37,11 @@ class ExpenseInputTest {
     }
 
     @Test
+    fun acceptsMaximumIntAndRejectsOverflow() {
+        assertEquals(Int.MAX_VALUE, parseExpenseAmount("2147483647"))
+        assertNull(parseExpenseAmount("2147483648"))
+    }
+
     fun rejectsNonFiniteAndScientificValues() {
         listOf("NaN", "Infinity", "1e3", "9".repeat(400)).forEach {
             assertNull(it, parseExpenseAmount(it))
