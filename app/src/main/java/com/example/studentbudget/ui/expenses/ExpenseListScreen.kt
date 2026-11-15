@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import com.example.studentbudget.ui.theme.StudentBudgetTheme
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -16,7 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import com.example.studentbudget.R
 
 @Composable
-fun ExpenseListScreen(expenses: List<ExpenseListItem>) {
+fun ExpenseListScreen(expenses: List<ExpenseListItem>, onAddExpense: () -> Unit) {
     LazyColumn(
         modifier = Modifier.fillMaxSize().safeDrawingPadding(),
         contentPadding = PaddingValues(24.dp),
@@ -29,6 +30,11 @@ fun ExpenseListScreen(expenses: List<ExpenseListItem>) {
         if (expenses.isEmpty()) {
             item {
                 Text(stringResource(R.string.no_expenses), style = MaterialTheme.typography.bodyLarge)
+            }
+        }
+        item {
+            Button(onClick = onAddExpense) {
+                Text(stringResource(R.string.add_expense))
             }
         }
         items(expenses, key = { expense -> expense.id }) { expense ->

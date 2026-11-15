@@ -2,4 +2,5 @@
     <string name="app_name">Student Budget</string>
     <string name="total_spent">Total spent</string>
     <string name="no_expenses">No expenses yet. Tap Add expense to start.</string>
+    <string name="add_expense">Add expense</string>
 </resources>

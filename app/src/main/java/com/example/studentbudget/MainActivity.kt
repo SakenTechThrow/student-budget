@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             StudentBudgetTheme {
                 Surface {
-                    ExpenseListScreen(sampleExpenses)
+                    ExpenseListScreen(sampleExpenses, onAddExpense = {})
                 }
             }
         }
