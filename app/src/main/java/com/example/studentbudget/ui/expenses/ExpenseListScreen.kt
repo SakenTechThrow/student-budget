@@ -24,9 +24,11 @@ fun ExpenseListScreen(
     expenses: List<ExpenseListItem>,
     total: Long,
     onExpenseClick: (Int) -> Unit,
-    onAddExpense: () -> Unit
+    onAddExpense: () -> Unit,
+    snackbarHost: @Composable () -> Unit = {}
 ) {
     Scaffold(
+        snackbarHost = snackbarHost,
         topBar = { TopAppBar(title = { Text(stringResource(R.string.app_name)) }) },
         floatingActionButton = {
             Button(onClick = onAddExpense) {
