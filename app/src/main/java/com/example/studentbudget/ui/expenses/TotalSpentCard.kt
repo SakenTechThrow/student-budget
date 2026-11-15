@@ -11,6 +11,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.example.studentbudget.R
 
@@ -27,7 +29,11 @@ internal fun TotalSpentCard(total: Long) {
             modifier = Modifier.padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            Text(stringResource(R.string.total_spent), style = MaterialTheme.typography.labelLarge)
+            Text(
+                stringResource(R.string.total_spent),
+                modifier = Modifier.semantics { heading() },
+                style = MaterialTheme.typography.labelLarge
+            )
             Text(formatTenge(total), style = MaterialTheme.typography.headlineMedium)
         }
     }

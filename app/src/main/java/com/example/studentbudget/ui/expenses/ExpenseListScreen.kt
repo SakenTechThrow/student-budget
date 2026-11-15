@@ -13,6 +13,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.MaterialTheme
 import com.example.studentbudget.R
@@ -31,7 +33,11 @@ fun ExpenseListScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             item {
-                Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineMedium)
+                Text(
+                    stringResource(R.string.app_name),
+                    modifier = Modifier.semantics { heading() },
+                    style = MaterialTheme.typography.headlineMedium
+                )
             }
             item { TotalSpentCard(expenses.sumOf { it.amount.toLong() }) }
             if (expenses.isEmpty()) {
