@@ -25,14 +25,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.studentbudget.R
 
 @Composable
 fun AddExpenseScreen(
     categories: List<String>,
-    onSave: (String, Double, String) -> Boolean,
+    onSave: (String, Int, String) -> Boolean,
     onBack: () -> Unit
 ) {
     var title by rememberSaveable { mutableStateOf("") }
@@ -73,10 +75,10 @@ fun AddExpenseScreen(
                 saveFailed = false
             },
             label = { Text("Amount (₸)") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             singleLine = true,
             isError = amountError,
-            supportingText = { if (amountError) Text("Enter a valid amount greater than 0") },
+            supportingText = { if (amountError) Text(stringResource(R.string.invalid_expense_amount)) },
             modifier = Modifier.fillMaxWidth()
         )
         Column {
@@ -126,7 +128,7 @@ fun AddExpenseScreen(
             Text("Save")
         }
         OutlinedButton(onClick = onBack, modifier = Modifier.fillMaxWidth()) {
-            Text("Back")
+            Text(stringResource(R.string.back))
         }
     }
 }

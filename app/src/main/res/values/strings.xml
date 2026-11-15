@@ -10,4 +10,5 @@
     <string name="category_food">Food</string>
     <string name="back">Back</string>
     <string name="expense_not_found">Expense not found</string>
+    <string name="invalid_expense_amount">Enter a positive whole amount in tenge</string>
 </resources>
