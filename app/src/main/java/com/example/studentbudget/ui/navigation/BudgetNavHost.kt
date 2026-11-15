@@ -16,12 +16,14 @@ internal fun BudgetNavHost(viewModel: BudgetViewModel) {
     NavHost(navController = navController, startDestination = BudgetRoutes.EXPENSES) {
         composable(BudgetRoutes.EXPENSES) {
             val expenses by viewModel.expenses.collectAsStateWithLifecycle()
+            val total by viewModel.totalAmount.collectAsStateWithLifecycle()
             ExpenseListScreen(
                 expenses = expenses.map { expense ->
                     ExpenseListItem(expense.id, expense.title, expense.amount, expense.category.displayName)
                 },
                 onAddExpense = {},
-                onExpenseClick = {}
+                onExpenseClick = {},
+                total = total
             )
         }
     }

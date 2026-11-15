@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import com.example.studentbudget.ui.theme.StudentBudgetTheme
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -24,9 +23,9 @@ fun ExpenseListScreen(
     expenses: List<ExpenseListItem>,
     onAddExpense: () -> Unit,
     onExpenseClick: (Int) -> Unit,
-    snackbarHost: @Composable () -> Unit = {}
+    total: Long = expenses.sumOf { it.amount.toLong() }
 ) {
-    Scaffold(snackbarHost = snackbarHost) { insets ->
+    Scaffold { insets ->
         LazyColumn(
             modifier = Modifier.fillMaxSize().padding(insets),
             contentPadding = PaddingValues(24.dp),
@@ -39,7 +38,7 @@ fun ExpenseListScreen(
                     style = MaterialTheme.typography.headlineMedium
                 )
             }
-            item { TotalSpentCard(expenses.sumOf { it.amount.toLong() }) }
+            item { TotalSpentCard(total) }
             if (expenses.isEmpty()) {
                 item {
                     Text(stringResource(R.string.no_expenses), style = MaterialTheme.typography.bodyLarge)
