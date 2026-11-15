@@ -6,6 +6,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.studentbudget.data.ExpenseCategory
+import com.example.studentbudget.ui.addexpense.AddExpenseScreen
 import com.example.studentbudget.ui.expenses.ExpenseListItem
 import com.example.studentbudget.ui.expenses.ExpenseListScreen
 import com.example.studentbudget.viewmodel.BudgetViewModel
@@ -21,9 +23,23 @@ internal fun BudgetNavHost(viewModel: BudgetViewModel) {
                 expenses = expenses.map { expense ->
                     ExpenseListItem(expense.id, expense.title, expense.amount, expense.category.displayName)
                 },
-                onAddExpense = {},
+                onAddExpense = {
+                    navController.navigate(BudgetRoutes.ADD_EXPENSE) { launchSingleTop = true }
+                },
                 onExpenseClick = {},
                 total = total
+            )
+        }
+        composable(BudgetRoutes.ADD_EXPENSE) {
+            val categories = ExpenseCategory.entries.associateBy(ExpenseCategory::displayName)
+            AddExpenseScreen(
+                categories = categories.keys.toList(),
+                onSave = { title, amount, categoryName ->
+                    val category = categories[categoryName]
+                    category != null &&
+                        viewModel.addExpense(title, amount.toString(), category) == null
+                },
+                onBack = { navController.popBackStack(BudgetRoutes.EXPENSES, inclusive = false) }
             )
         }
     }
