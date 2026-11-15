@@ -3,11 +3,6 @@
     <string name="total_spent">Total spent</string>
     <string name="no_expenses">No expenses yet. Tap Add expense to start.</string>
     <string name="add_expense">Add expense</string>
-    <string name="demo_add_message">The add expense form will open here after integration.</string>
-    <string name="sample_bus">Bus</string>
-    <string name="sample_coffee">Coffee</string>
-    <string name="category_transport">Transport</string>
-    <string name="category_food">Food</string>
     <string name="back">Back</string>
     <string name="expense_not_found">Expense not found</string>
     <string name="invalid_expense_amount">Enter a positive whole amount in tenge</string>

@@ -4,38 +4,19 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.lifecycle.ViewModelProvider
+import com.example.studentbudget.ui.navigation.BudgetNavHost
 import com.example.studentbudget.ui.theme.StudentBudgetTheme
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.res.stringResource
-import kotlinx.coroutines.launch
-import com.example.studentbudget.ui.expenses.ExpenseListItem
-import com.example.studentbudget.ui.expenses.ExpenseListScreen
+import com.example.studentbudget.viewmodel.BudgetViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        val viewModel = ViewModelProvider(this)[BudgetViewModel::class.java]
         setContent {
             StudentBudgetTheme {
-                val snackbar = remember { SnackbarHostState() }
-                val scope = rememberCoroutineScope()
-                val sampleExpenses = listOf(
-                    ExpenseListItem(1, stringResource(R.string.sample_bus), 120, stringResource(R.string.category_transport)),
-                    ExpenseListItem(2, stringResource(R.string.sample_coffee), 800, stringResource(R.string.category_food))
-                )
-                val addMessage = stringResource(R.string.demo_add_message)
-                ExpenseListScreen(
-                    expenses = sampleExpenses,
-                    onAddExpense = { scope.launch { snackbar.showSnackbar(addMessage) } },
-                    onExpenseClick = { id ->
-                        val title = sampleExpenses.first { it.id == id }.title
-                        scope.launch { snackbar.showSnackbar(title) }
-                    },
-                    snackbarHost = { SnackbarHost(snackbar) }
-                )
+                BudgetNavHost(viewModel)
             }
         }
     }
