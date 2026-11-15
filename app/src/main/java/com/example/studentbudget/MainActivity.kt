@@ -14,11 +14,6 @@ import kotlinx.coroutines.launch
 import com.example.studentbudget.ui.expenses.ExpenseListItem
 import com.example.studentbudget.ui.expenses.ExpenseListScreen
 
-private val sampleExpenses = listOf(
-    ExpenseListItem(1, "Bus", 120, "Transport"),
-    ExpenseListItem(2, "Coffee", 800, "Food")
-)
-
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +22,10 @@ class MainActivity : ComponentActivity() {
             StudentBudgetTheme {
                 val snackbar = remember { SnackbarHostState() }
                 val scope = rememberCoroutineScope()
+                val sampleExpenses = listOf(
+                    ExpenseListItem(1, stringResource(R.string.sample_bus), 120, stringResource(R.string.category_transport)),
+                    ExpenseListItem(2, stringResource(R.string.sample_coffee), 800, stringResource(R.string.category_food))
+                )
                 val addMessage = stringResource(R.string.demo_add_message)
                 ExpenseListScreen(
                     expenses = sampleExpenses,
