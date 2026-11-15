@@ -27,7 +27,7 @@ fun ExpenseListScreen(expenses: List<ExpenseListItem>) {
         }
         items(expenses, key = { expense -> expense.id }) { expense ->
             Text(expense.title, style = MaterialTheme.typography.titleMedium)
-            Text(expense.category + " · " + expense.amount + " ₸", style = MaterialTheme.typography.bodyMedium)
+            Text(expense.category + " · " + formatTenge(expense.amount.toLong()), style = MaterialTheme.typography.bodyMedium)
         }
     }
 }
