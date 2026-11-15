@@ -3,4 +3,5 @@
     <string name="total_spent">Total spent</string>
     <string name="no_expenses">No expenses yet. Tap Add expense to start.</string>
     <string name="add_expense">Add expense</string>
+    <string name="demo_add_message">The add expense form will open here after integration.</string>
 </resources>

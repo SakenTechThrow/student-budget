@@ -3,11 +3,12 @@ package com.example.studentbudget.ui.expenses
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import com.example.studentbudget.ui.theme.StudentBudgetTheme
 import androidx.compose.material3.Button
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -17,28 +18,35 @@ import androidx.compose.material3.MaterialTheme
 import com.example.studentbudget.R
 
 @Composable
-fun ExpenseListScreen(expenses: List<ExpenseListItem>, onAddExpense: () -> Unit, onExpenseClick: (Int) -> Unit) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize().safeDrawingPadding(),
-        contentPadding = PaddingValues(24.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        item {
-            Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineMedium)
-        }
-        item { TotalSpentCard(expenses.sumOf { it.amount.toLong() }) }
-        if (expenses.isEmpty()) {
+fun ExpenseListScreen(
+    expenses: List<ExpenseListItem>,
+    onAddExpense: () -> Unit,
+    onExpenseClick: (Int) -> Unit,
+    snackbarHost: @Composable () -> Unit = {}
+) {
+    Scaffold(snackbarHost = snackbarHost) { insets ->
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().padding(insets),
+            contentPadding = PaddingValues(24.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
             item {
-                Text(stringResource(R.string.no_expenses), style = MaterialTheme.typography.bodyLarge)
+                Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineMedium)
             }
-        }
-        item {
-            Button(onClick = onAddExpense) {
-                Text(stringResource(R.string.add_expense))
+            item { TotalSpentCard(expenses.sumOf { it.amount.toLong() }) }
+            if (expenses.isEmpty()) {
+                item {
+                    Text(stringResource(R.string.no_expenses), style = MaterialTheme.typography.bodyLarge)
+                }
             }
-        }
-        items(expenses, key = { expense -> expense.id }) { expense ->
-            ExpenseCard(expense, onClick = { onExpenseClick(expense.id) })
+            item {
+                Button(onClick = onAddExpense) {
+                    Text(stringResource(R.string.add_expense))
+                }
+            }
+            items(expenses, key = { expense -> expense.id }) { expense ->
+                ExpenseCard(expense, onClick = { onExpenseClick(expense.id) })
+            }
         }
     }
 }
