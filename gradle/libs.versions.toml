@@ -6,8 +6,10 @@ composeBom = "2026.02.01"
 lifecycle = "2.9.4"
 coroutines = "1.10.2"
 junit = "4.13.2"
+navigation = "2.9.5"
 
 [libraries]
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
