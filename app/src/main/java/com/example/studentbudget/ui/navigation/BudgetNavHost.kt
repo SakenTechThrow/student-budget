@@ -3,11 +3,14 @@ package com.example.studentbudget.ui.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.studentbudget.data.ExpenseCategory
 import com.example.studentbudget.ui.addexpense.AddExpenseScreen
+import com.example.studentbudget.ui.details.ExpenseDetailsScreen
 import com.example.studentbudget.ui.expenses.ExpenseListItem
 import com.example.studentbudget.ui.expenses.ExpenseListScreen
 import com.example.studentbudget.viewmodel.BudgetViewModel
@@ -26,7 +29,11 @@ internal fun BudgetNavHost(viewModel: BudgetViewModel) {
                 onAddExpense = {
                     navController.navigate(BudgetRoutes.ADD_EXPENSE) { launchSingleTop = true }
                 },
-                onExpenseClick = {},
+                onExpenseClick = { expenseId ->
+                    navController.navigate(BudgetRoutes.expenseDetails(expenseId)) {
+                        launchSingleTop = true
+                    }
+                },
                 total = total
             )
         }
@@ -39,6 +46,16 @@ internal fun BudgetNavHost(viewModel: BudgetViewModel) {
                     category != null &&
                         viewModel.addExpense(title, amount.toString(), category) == null
                 },
+                onBack = { navController.popBackStack(BudgetRoutes.EXPENSES, inclusive = false) }
+            )
+        }
+        composable(
+            route = BudgetRoutes.EXPENSE_DETAILS,
+            arguments = listOf(navArgument(BudgetRoutes.EXPENSE_ID) { type = NavType.IntType })
+        ) { entry ->
+            val expenseId = entry.arguments?.getInt(BudgetRoutes.EXPENSE_ID)
+            ExpenseDetailsScreen(
+                expense = expenseId?.let(viewModel::findExpenseById),
                 onBack = { navController.popBackStack(BudgetRoutes.EXPENSES, inclusive = false) }
             )
         }
