@@ -26,8 +26,7 @@ fun ExpenseListScreen(expenses: List<ExpenseListItem>) {
             Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineMedium)
         }
         items(expenses, key = { expense -> expense.id }) { expense ->
-            Text(expense.title, style = MaterialTheme.typography.titleMedium)
-            Text(expense.category + " · " + formatTenge(expense.amount.toLong()), style = MaterialTheme.typography.bodyMedium)
+            ExpenseCard(expense)
         }
     }
 }
