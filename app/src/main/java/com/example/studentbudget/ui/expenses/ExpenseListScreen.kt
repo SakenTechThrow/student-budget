@@ -26,6 +26,11 @@ fun ExpenseListScreen(expenses: List<ExpenseListItem>) {
             Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineMedium)
         }
         item { TotalSpentCard(expenses.sumOf { it.amount.toLong() }) }
+        if (expenses.isEmpty()) {
+            item {
+                Text(stringResource(R.string.no_expenses), style = MaterialTheme.typography.bodyLarge)
+            }
+        }
         items(expenses, key = { expense -> expense.id }) { expense ->
             ExpenseCard(expense)
         }
