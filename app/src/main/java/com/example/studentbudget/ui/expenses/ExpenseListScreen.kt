@@ -17,7 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import com.example.studentbudget.R
 
 @Composable
-fun ExpenseListScreen(expenses: List<ExpenseListItem>, onAddExpense: () -> Unit) {
+fun ExpenseListScreen(expenses: List<ExpenseListItem>, onAddExpense: () -> Unit, onExpenseClick: (Int) -> Unit) {
     LazyColumn(
         modifier = Modifier.fillMaxSize().safeDrawingPadding(),
         contentPadding = PaddingValues(24.dp),
@@ -38,7 +38,7 @@ fun ExpenseListScreen(expenses: List<ExpenseListItem>, onAddExpense: () -> Unit)
             }
         }
         items(expenses, key = { expense -> expense.id }) { expense ->
-            ExpenseCard(expense)
+            ExpenseCard(expense, onClick = { onExpenseClick(expense.id) })
         }
     }
 }
