@@ -8,15 +8,18 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.studentbudget.R
 import com.example.studentbudget.data.Expense
 import com.example.studentbudget.ui.expenses.formatTenge
 
 @Composable
-internal fun ExpenseDetailsScreen(expense: Expense) {
+internal fun ExpenseDetailsScreen(expense: Expense, onBack: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -28,5 +31,8 @@ internal fun ExpenseDetailsScreen(expense: Expense) {
         Text(expense.title, style = MaterialTheme.typography.headlineMedium)
         Text(expense.category.displayName, style = MaterialTheme.typography.bodyLarge)
         Text(formatTenge(expense.amount.toLong()), style = MaterialTheme.typography.titleLarge)
+        OutlinedButton(onClick = onBack) {
+            Text(stringResource(R.string.back))
+        }
     }
 }
