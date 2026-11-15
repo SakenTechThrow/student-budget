@@ -6,14 +6,13 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.example.studentbudget.ui.theme.StudentBudgetTheme
 import androidx.compose.material3.Surface
+import com.example.studentbudget.ui.expenses.ExpenseListItem
 import com.example.studentbudget.ui.expenses.ExpenseListScreen
 
 private val sampleExpenses = listOf(
     ExpenseListItem(1, "Bus", 120, "Transport"),
     ExpenseListItem(2, "Coffee", 800, "Food")
 )
-
-data class ExpenseListItem(val id: Int, val title: String, val amount: Int, val category: String)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

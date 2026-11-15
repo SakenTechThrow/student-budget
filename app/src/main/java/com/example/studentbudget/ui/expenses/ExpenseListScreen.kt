@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.MaterialTheme
-import com.example.studentbudget.ExpenseListItem
 import com.example.studentbudget.R
 
 @Composable
