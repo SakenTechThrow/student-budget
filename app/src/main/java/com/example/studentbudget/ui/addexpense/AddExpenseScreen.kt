@@ -1,5 +1,6 @@
 package com.example.studentbudget.ui.addexpense
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -38,6 +39,8 @@ fun AddExpenseScreen(
     val titleError = submitted && title.isBlank()
     val amountError = submitted && parsedAmount == null
     val categoryError = submitted && category !in categories
+
+    BackHandler(onBack = onBack)
 
     Column(
         modifier = Modifier.fillMaxSize().padding(24.dp),
@@ -106,6 +109,9 @@ fun AddExpenseScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Save")
+        }
+        OutlinedButton(onClick = onBack, modifier = Modifier.fillMaxWidth()) {
+            Text("Back")
         }
     }
 }
