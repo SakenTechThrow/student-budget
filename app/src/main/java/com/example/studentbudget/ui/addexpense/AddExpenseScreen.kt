@@ -35,6 +35,7 @@ fun AddExpenseScreen(
     var category by remember { mutableStateOf(categories.firstOrNull().orEmpty()) }
     var categoryMenuOpen by remember { mutableStateOf(false) }
     var submitted by remember { mutableStateOf(false) }
+    var saveFailed by remember { mutableStateOf(false) }
     val parsedAmount = parseExpenseAmount(amount)
     val titleError = submitted && title.isBlank()
     val amountError = submitted && parsedAmount == null
@@ -51,6 +52,7 @@ fun AddExpenseScreen(
             value = title,
             onValueChange = {
                 title = it
+                saveFailed = false
             },
             label = { Text("Expense name") },
             singleLine = true,
@@ -62,6 +64,7 @@ fun AddExpenseScreen(
             value = amount,
             onValueChange = {
                 amount = it
+                saveFailed = false
             },
             label = { Text("Amount (₸)") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
@@ -89,6 +92,7 @@ fun AddExpenseScreen(
                         onClick = {
                             category = item
                             categoryMenuOpen = false
+                            saveFailed = false
                         }
                     )
                 }
@@ -97,12 +101,17 @@ fun AddExpenseScreen(
                 Text("Select a category", color = MaterialTheme.colorScheme.error)
             }
         }
+        if (saveFailed) {
+            Text("Could not save the expense. Try again.", color = MaterialTheme.colorScheme.error)
+        }
         Button(
             onClick = {
                 submitted = true
                 if (title.isNotBlank() && parsedAmount != null && category in categories) {
                     if (onSave(title.trim(), parsedAmount, category)) {
                         onBack()
+                    } else {
+                        saveFailed = true
                     }
                 }
             },
