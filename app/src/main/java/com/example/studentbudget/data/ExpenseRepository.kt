@@ -16,6 +16,8 @@ class ExpenseRepository {
 
     val expenses: StateFlow<List<Expense>> = _expenses.asStateFlow()
 
+    fun findById(id: Int): Expense? = _expenses.value.firstOrNull { it.id == id }
+
     @Synchronized
     fun addExpense(title: String, amount: Int, category: ExpenseCategory): Expense {
         val cleanTitle = title.trim()
