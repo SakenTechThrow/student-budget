@@ -5,8 +5,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -18,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
@@ -30,12 +35,12 @@ fun AddExpenseScreen(
     onSave: (String, Double, String) -> Boolean,
     onBack: () -> Unit
 ) {
-    var title by remember { mutableStateOf("") }
-    var amount by remember { mutableStateOf("") }
-    var category by remember { mutableStateOf(categories.firstOrNull().orEmpty()) }
+    var title by rememberSaveable { mutableStateOf("") }
+    var amount by rememberSaveable { mutableStateOf("") }
+    var category by rememberSaveable { mutableStateOf(categories.firstOrNull().orEmpty()) }
     var categoryMenuOpen by remember { mutableStateOf(false) }
-    var submitted by remember { mutableStateOf(false) }
-    var saveFailed by remember { mutableStateOf(false) }
+    var submitted by rememberSaveable { mutableStateOf(false) }
+    var saveFailed by rememberSaveable { mutableStateOf(false) }
     val parsedAmount = parseExpenseAmount(amount)
     val titleError = submitted && title.isBlank()
     val amountError = submitted && parsedAmount == null
@@ -44,7 +49,8 @@ fun AddExpenseScreen(
     BackHandler(onBack = onBack)
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(24.dp),
+        modifier = Modifier.fillMaxSize().safeDrawingPadding().imePadding()
+            .verticalScroll(rememberScrollState()).padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text("Add expense", style = MaterialTheme.typography.headlineMedium)
