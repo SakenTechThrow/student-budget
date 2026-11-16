@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.studentbudget.data.Expense
 import com.example.studentbudget.data.ExpenseRepository
+import com.example.studentbudget.data.ExpenseCategory
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -22,4 +23,14 @@ class BudgetViewModel(
         started = SharingStarted.Eagerly,
         initialValue = expenses.value.sumOf { it.amount.toLong() }
     )
+
+    /** Returns null on success, otherwise an error message for the form. */
+    fun addExpense(title: String, amountText: String, category: ExpenseCategory): String? {
+        if (title.isBlank()) return "Enter an expense title"
+        val amount = amountText.trim().toIntOrNull()
+            ?: return "Enter a valid amount in tenge"
+        if (amount <= 0) return "Amount must be greater than zero"
+        repository.addExpense(title, amount, category)
+        return null
+    }
 }
