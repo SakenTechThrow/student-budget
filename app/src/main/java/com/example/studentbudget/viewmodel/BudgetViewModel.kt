@@ -24,6 +24,8 @@ class BudgetViewModel(
         initialValue = expenses.value.sumOf { it.amount.toLong() }
     )
 
+    fun findExpenseById(id: Int): Expense? = repository.findById(id)
+
     /** Returns null on success, otherwise an error message for the form. */
     fun addExpense(title: String, amountText: String, category: ExpenseCategory): String? {
         if (title.isBlank()) return "Enter an expense title"
