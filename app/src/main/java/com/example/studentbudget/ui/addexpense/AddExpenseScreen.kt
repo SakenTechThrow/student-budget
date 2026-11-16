@@ -6,7 +6,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,9 +23,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun AddExpenseScreen() {
+fun AddExpenseScreen(
+    categories: List<String>
+) {
     var title by remember { mutableStateOf("") }
     var amount by remember { mutableStateOf("") }
+    var category by remember { mutableStateOf(categories.firstOrNull().orEmpty()) }
+    var categoryMenuOpen by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier.fillMaxSize().padding(24.dp),
@@ -48,6 +55,30 @@ fun AddExpenseScreen() {
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
+        Column {
+            Text("Category", style = MaterialTheme.typography.labelLarge)
+            OutlinedButton(
+                onClick = { categoryMenuOpen = true },
+                enabled = categories.isNotEmpty(),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(category.ifEmpty { "Select a category" })
+            }
+            DropdownMenu(
+                expanded = categoryMenuOpen,
+                onDismissRequest = { categoryMenuOpen = false }
+            ) {
+                categories.forEach { item ->
+                    DropdownMenuItem(
+                        text = { Text(item) },
+                        onClick = {
+                            category = item
+                            categoryMenuOpen = false
+                        }
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -55,6 +86,6 @@ fun AddExpenseScreen() {
 @Composable
 private fun AddExpensePreview() {
     MaterialTheme {
-        AddExpenseScreen()
+        AddExpenseScreen(categories = listOf("Food", "Transport", "Study", "Other"))
     }
 }
