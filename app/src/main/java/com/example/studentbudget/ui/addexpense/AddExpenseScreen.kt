@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
@@ -24,12 +25,19 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun AddExpenseScreen(
-    categories: List<String>
+    categories: List<String>,
+    onSave: (String, Double, String) -> Boolean,
+    onBack: () -> Unit
 ) {
     var title by remember { mutableStateOf("") }
     var amount by remember { mutableStateOf("") }
     var category by remember { mutableStateOf(categories.firstOrNull().orEmpty()) }
     var categoryMenuOpen by remember { mutableStateOf(false) }
+    var submitted by remember { mutableStateOf(false) }
+    val parsedAmount = parseExpenseAmount(amount)
+    val titleError = submitted && title.isBlank()
+    val amountError = submitted && parsedAmount == null
+    val categoryError = submitted && category !in categories
 
     Column(
         modifier = Modifier.fillMaxSize().padding(24.dp),
@@ -43,6 +51,8 @@ fun AddExpenseScreen(
             },
             label = { Text("Expense name") },
             singleLine = true,
+            isError = titleError,
+            supportingText = { if (titleError) Text("Enter an expense name") },
             modifier = Modifier.fillMaxWidth()
         )
         OutlinedTextField(
@@ -53,6 +63,8 @@ fun AddExpenseScreen(
             label = { Text("Amount (₸)") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             singleLine = true,
+            isError = amountError,
+            supportingText = { if (amountError) Text("Enter a valid amount greater than 0") },
             modifier = Modifier.fillMaxWidth()
         )
         Column {
@@ -78,6 +90,22 @@ fun AddExpenseScreen(
                     )
                 }
             }
+            if (categoryError) {
+                Text("Select a category", color = MaterialTheme.colorScheme.error)
+            }
+        }
+        Button(
+            onClick = {
+                submitted = true
+                if (title.isNotBlank() && parsedAmount != null && category in categories) {
+                    if (onSave(title.trim(), parsedAmount, category)) {
+                        onBack()
+                    }
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Save")
         }
     }
 }
@@ -86,6 +114,10 @@ fun AddExpenseScreen(
 @Composable
 private fun AddExpensePreview() {
     MaterialTheme {
-        AddExpenseScreen(categories = listOf("Food", "Transport", "Study", "Other"))
+        AddExpenseScreen(
+            categories = listOf("Food", "Transport", "Study", "Other"),
+            onSave = { _, _, _ -> false },
+            onBack = {}
+        )
     }
 }
