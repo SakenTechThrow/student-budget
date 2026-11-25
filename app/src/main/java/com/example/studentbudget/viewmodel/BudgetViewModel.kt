@@ -42,6 +42,12 @@ class BudgetViewModel(
         initialValue = 0L
     )
 
+    suspend fun deleteExpense(id: Int): Boolean = try {
+        repository.deleteExpense(id)
+    } catch (_: SQLiteException) {
+        false
+    }
+
     suspend fun updateExpense(expense: Expense): String? {
         if (expense.title.isBlank()) return "Enter an expense title"
         if (expense.amount <= 0) return "Amount must be greater than zero"
