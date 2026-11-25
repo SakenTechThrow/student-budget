@@ -6,7 +6,13 @@ import androidx.lifecycle.viewModelScope
 import com.example.studentbudget.data.Expense
 import com.example.studentbudget.data.ExpenseCategory
 import com.example.studentbudget.data.ExpenseRepository
+import com.example.studentbudget.data.settings.BudgetSettings
 import com.example.studentbudget.data.settings.SettingsRepository
+import com.example.studentbudget.ui.statistics.MonthlyStatistics
+import com.example.studentbudget.ui.statistics.calendarMonths
+import com.example.studentbudget.ui.statistics.statisticsFor
+import java.time.YearMonth
+import kotlinx.coroutines.flow.combine
 import java.time.LocalDate
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -32,6 +38,23 @@ class BudgetViewModel(
         initialValue = 0L
     )
 
+    val settings = settingsRepository.settings.stateIn(
+        viewModelScope, SharingStarted.Eagerly, BudgetSettings()
+    )
+
+    private val initialMonth = YearMonth.now()
+    private val currentMonth = calendarMonths().stateIn(
+        viewModelScope, SharingStarted.Eagerly, initialMonth
+    )
+    internal val monthlyStatistics = combine(expenses, currentMonth) { entries, month ->
+        MonthSummaries(month, entries.statisticsFor(month), entries.statisticsFor(month.minusMonths(1)))
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.Eagerly,
+        MonthSummaries(initialMonth, emptyList<Expense>().statisticsFor(initialMonth),
+            emptyList<Expense>().statisticsFor(initialMonth.minusMonths(1)))
+    )
+
     /** Returns null on success, otherwise an error message for the form. */
     suspend fun addExpense(
         title: String,
@@ -51,3 +74,9 @@ class BudgetViewModel(
         }
     }
 }
+
+internal data class MonthSummaries(
+    val month: YearMonth,
+    val current: MonthlyStatistics,
+    val previous: MonthlyStatistics
+)
