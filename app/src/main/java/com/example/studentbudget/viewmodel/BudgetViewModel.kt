@@ -42,6 +42,16 @@ class BudgetViewModel(
         initialValue = 0L
     )
 
+    suspend fun updateExpense(expense: Expense): String? {
+        if (expense.title.isBlank()) return "Enter an expense title"
+        if (expense.amount <= 0) return "Amount must be greater than zero"
+        return try {
+            if (repository.updateExpense(expense)) null else "Expense no longer exists"
+        } catch (_: SQLiteException) {
+            "Could not update the expense. Try again."
+        }
+    }
+
     /** Returns null on success, otherwise an error message for the form. */
     suspend fun addExpense(
         title: String,
