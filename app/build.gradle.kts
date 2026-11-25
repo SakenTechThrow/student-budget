@@ -17,12 +17,17 @@ android {
         versionName = "1.0"
     }
 
+    compileOptions {
+        isCoreLibraryDesugaringEnabled = true
+    }
+
     buildFeatures {
         compose = true
     }
 }
 
 dependencies {
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.navigation.compose)

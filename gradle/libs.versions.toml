@@ -1,4 +1,5 @@
 [versions]
+desugar = "2.1.5"
 agp = "9.4.1"
 activityCompose = "1.8.0"
 kotlin = "2.2.10"
@@ -9,6 +10,7 @@ junit = "4.13.2"
 navigation = "2.9.5"
 
 [libraries]
+desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugar" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
