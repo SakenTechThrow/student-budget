@@ -9,6 +9,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.studentbudget.data.ExpenseRepository
 import com.example.studentbudget.data.local.BudgetDatabase
+import com.example.studentbudget.data.settings.SettingsRepository
 import com.example.studentbudget.ui.navigation.BudgetNavHost
 import com.example.studentbudget.ui.theme.StudentBudgetTheme
 import com.example.studentbudget.viewmodel.BudgetViewModel
@@ -20,7 +21,10 @@ class MainActivity : ComponentActivity() {
         val factory = viewModelFactory {
             initializer {
                 val dao = BudgetDatabase.getInstance(applicationContext).expenseDao()
-                BudgetViewModel(ExpenseRepository(dao))
+                BudgetViewModel(
+                    repository = ExpenseRepository(dao),
+                    settingsRepository = SettingsRepository(applicationContext)
+                )
             }
         }
         val viewModel = ViewModelProvider(this, factory)[BudgetViewModel::class.java]

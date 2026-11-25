@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.studentbudget.data.Expense
 import com.example.studentbudget.data.ExpenseCategory
 import com.example.studentbudget.data.ExpenseRepository
+import com.example.studentbudget.data.settings.SettingsRepository
 import java.time.LocalDate
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +15,8 @@ import kotlinx.coroutines.flow.stateIn
 
 /** Shared between list, add and details screens. */
 class BudgetViewModel(
-    private val repository: ExpenseRepository
+    private val repository: ExpenseRepository,
+    val settingsRepository: SettingsRepository
 ) : ViewModel() {
     val expenses: StateFlow<List<Expense>> = repository.expenses.stateIn(
         scope = viewModelScope,
