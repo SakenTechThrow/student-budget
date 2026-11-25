@@ -4,8 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -62,7 +62,13 @@ internal fun StatisticsScreen(summaries: MonthSummaries) {
         } else {
             item {
                 Text("Largest expense", style = MaterialTheme.typography.titleMedium)
-                Text("${statistics.largestExpense.title} · ${formatTenge(statistics.largestExpense.amount.toLong())}")
+                val largest = statistics.largestExpense
+                Text(largest.title)
+                Text(formatTenge(largest.amount.toLong()))
+            }
+            item { Text("Spending by category", style = MaterialTheme.typography.titleMedium) }
+            items(statistics.categories, key = { it.first.name }) { (category, amount) ->
+                CategorySpending(category, amount, statistics.total)
             }
         }
     }
