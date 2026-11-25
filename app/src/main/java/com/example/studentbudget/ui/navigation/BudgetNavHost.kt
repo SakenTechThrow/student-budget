@@ -3,7 +3,7 @@ package com.example.studentbudget.ui.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberSaveable
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -14,7 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.studentbudget.data.ExpenseCategory
 import com.example.studentbudget.data.settings.ExpenseSort
-import com.example.studentbudget.ui.addexpense.AddExpenseScreen
+import com.example.studentbudget.ui.addexpense.ExpenseEditorScreen
 import com.example.studentbudget.ui.details.ExpenseDetailsScreen
 import com.example.studentbudget.ui.expenses.ExpenseListItem
 import com.example.studentbudget.ui.expenses.ExpenseListScreen
@@ -58,12 +58,13 @@ internal fun BudgetNavHost(viewModel: BudgetViewModel) {
         }
         composable(BudgetRoutes.ADD_EXPENSE) {
             val categories = ExpenseCategory.entries.associateBy(ExpenseCategory::displayName)
-            AddExpenseScreen(
+            ExpenseEditorScreen(
+                expense = null,
                 categories = categories.keys.toList(),
-                onSave = { title, amount, categoryName ->
+                onSave = { title, amount, categoryName, date ->
                     val category = categories[categoryName]
-                    category != null &&
-                        viewModel.addExpense(title, amount.toString(), category) == null
+                    if (category == null) "Choose a category"
+                    else viewModel.addExpense(title, amount.toString(), category, date)
                 },
                 onBack = { navController.popBackStack(BudgetRoutes.EXPENSES, inclusive = false) }
             )
