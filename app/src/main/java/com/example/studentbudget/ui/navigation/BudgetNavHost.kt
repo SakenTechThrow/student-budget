@@ -77,8 +77,44 @@ internal fun BudgetNavHost(viewModel: BudgetViewModel) {
             val expenses by viewModel.expenses.collectAsStateWithLifecycle()
             ExpenseDetailsScreen(
                 expense = expenses.firstOrNull { it.id == expenseId },
-                onBack = { navController.popBackStack(BudgetRoutes.EXPENSES, inclusive = false) }
+                onBack = { navController.popBackStack(BudgetRoutes.EXPENSES, inclusive = false) },
+                onEdit = {
+                    if (expenseId != null) navController.navigate(BudgetRoutes.editExpense(expenseId))
+                },
+                onDelete = {
+                    if (expenseId != null) viewModel.deleteExpense(expenseId) else false
+                }
             )
+        }
+        composable(
+            route = BudgetRoutes.EDIT_EXPENSE,
+            arguments = listOf(navArgument(BudgetRoutes.EXPENSE_ID) { type = NavType.IntType })
+        ) { entry ->
+            val expenseId = entry.arguments?.getInt(BudgetRoutes.EXPENSE_ID)
+            val expenses by viewModel.expenses.collectAsStateWithLifecycle()
+            val expense = expenses.firstOrNull { it.id == expenseId }
+            if (expense == null) {
+                androidx.compose.material3.Text("Expense not found")
+            } else {
+                val categories = ExpenseCategory.entries.associateBy(ExpenseCategory::displayName)
+                ExpenseEditorScreen(
+                    expense = expense,
+                    categories = categories.keys.toList(),
+                    onSave = { title, amount, categoryName, date ->
+                        val category = categories[categoryName]
+                        if (category == null) "Choose a category"
+                        else viewModel.updateExpense(
+                            expense.copy(
+                                title = title,
+                                amount = amount,
+                                category = category,
+                                purchaseDate = date
+                            )
+                        )
+                    },
+                    onBack = { navController.popBackStack() }
+                )
+            }
         }
     }
 }
