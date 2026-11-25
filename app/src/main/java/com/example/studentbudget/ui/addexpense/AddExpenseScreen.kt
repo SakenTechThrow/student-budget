@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -30,11 +31,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.studentbudget.R
+import kotlinx.coroutines.launch
 
 @Composable
 fun AddExpenseScreen(
     categories: List<String>,
-    onSave: (String, Int, String) -> Boolean,
+    onSave: suspend (String, Int, String) -> Boolean,
     onBack: () -> Unit
 ) {
     var title by rememberSaveable { mutableStateOf("") }
@@ -42,13 +44,15 @@ fun AddExpenseScreen(
     var category by rememberSaveable { mutableStateOf(categories.firstOrNull().orEmpty()) }
     var categoryMenuOpen by remember { mutableStateOf(false) }
     var submitted by rememberSaveable { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    var saving by remember { mutableStateOf(false) }
     var saveFailed by rememberSaveable { mutableStateOf(false) }
     val parsedAmount = parseExpenseAmount(amount)
     val titleError = submitted && title.isBlank()
     val amountError = submitted && parsedAmount == null
     val categoryError = submitted && category !in categories
 
-    BackHandler(onBack = onBack)
+    BackHandler { if (!saving) onBack() }
 
     Column(
         modifier = Modifier.fillMaxSize().safeDrawingPadding().imePadding()
@@ -115,19 +119,29 @@ fun AddExpenseScreen(
         Button(
             onClick = {
                 submitted = true
-                if (title.isNotBlank() && parsedAmount != null && category in categories) {
-                    if (onSave(title.trim(), parsedAmount, category)) {
-                        onBack()
-                    } else {
-                        saveFailed = true
+                if (!saving && title.isNotBlank() && parsedAmount != null && category in categories) {
+                    saving = true
+                    val submittedTitle = title.trim()
+                    val submittedCategory = category
+                    scope.launch {
+                        try {
+                            if (onSave(submittedTitle, parsedAmount, submittedCategory)) {
+                                onBack()
+                            } else {
+                                saveFailed = true
+                            }
+                        } finally {
+                            saving = false
+                        }
                     }
                 }
             },
+            enabled = !saving,
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Save")
         }
-        OutlinedButton(onClick = onBack, modifier = Modifier.fillMaxWidth()) {
+        OutlinedButton(onClick = onBack, enabled = !saving, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.back))
         }
     }
