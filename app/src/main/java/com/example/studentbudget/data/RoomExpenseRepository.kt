@@ -25,6 +25,14 @@ class RoomExpenseRepository(private val dao: ExpenseDao) {
         return expense.copy(id = id.toInt())
     }
 
+    suspend fun updateExpense(expense: Expense): Boolean {
+        require(expense.id > 0) { "Expense ID must be positive" }
+        val validated = expense.copy(title = validate(expense.title, expense.amount))
+        return dao.update(validated.toEntity()) == 1
+    }
+
+    suspend fun deleteExpense(id: Int): Boolean = dao.deleteById(id) == 1
+
     private fun validate(title: String, amount: Int): String {
         val cleanTitle = title.trim()
         require(cleanTitle.isNotEmpty()) { "Expense title cannot be empty" }
