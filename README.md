@@ -13,10 +13,10 @@ Student Budget is a Kotlin and Jetpack Compose app for tracking student expenses
 
 ## Week 12 features
 
-- The expense list shows the total, reusable expense cards, an empty state, and an Add expense action. The demo starts at 920 ₸ (Bus and Coffee).
+- The expense list shows the total, reusable expense cards, an empty state, and an Add expense action. The expense list starts empty after a fresh install.
 - The Add expense form validates the title, positive whole-tenge amount, and category. Save returns to the list once the shared ViewModel accepts the entry. The form keeps entered values after a failed save and across rotation. Back returns without saving.
 - Tapping a card opens details for that expense ID. Details shows the title, category, and formatted amount. Back returns to the previous list.
-- Expense data is held in memory. Restarting the app process restores the demo entries.
+- Expenses are stored in Room and persist across app restarts.
 
 ## Run locally
 
@@ -26,13 +26,13 @@ Student Budget is a Kotlin and Jetpack Compose app for tracking student expenses
 
 ## How the screens connect
 
-`MainActivity` owns one `BudgetViewModel`. `BudgetNavHost` observes its expense list and total, passes valid form input to `addExpense`, and looks up the selected expense by ID for the details screen. See [the data layer notes](PART2_INTEGRATION.md) for the repository and ViewModel API.
+`MainActivity` owns one `BudgetViewModel`. `BudgetNavHost` observes its expense list and total, passes valid form input to `addExpense`, and looks up the selected expense by ID for the details screen. See [the data layer notes](PART2_INTEGRATION.md) for the Room and DataStore contracts.
 
 ## Verify navigation
 
-1. Launch the app and confirm that the total is 920 ₸. Open **Bus** and verify **Transport** and **120 ₸**. Tap **Back**.
+1. On a fresh install, confirm that the list is empty and the total is 0 ₸.
 2. Open **Add expense**. Enter **Lunch**, **0**, and **Food**, then tap **Save**. The amount error should appear and the form should remain open.
-3. Change the amount to **1500** and tap **Save**. Confirm that the list shows **Lunch** and a total of **2 420 ₸**.
-4. Open **Lunch** and verify **Food** and **1 500 ₸**. Use Android's system Back and confirm the same list and total are still displayed.
+3. Change the amount to **1500** and tap **Save**. Confirm that the list shows **Lunch** and a total of **1 500 ₸**.
+4. Open **Lunch** and verify **Food** and **1 500 ₸**. Force-stop and reopen the app, then confirm that the same item and total are still present.
 
 Run the unit tests, build, and lint with `./gradlew :app:testDebugUnitTest :app:assembleDebug :app:lintDebug`.
