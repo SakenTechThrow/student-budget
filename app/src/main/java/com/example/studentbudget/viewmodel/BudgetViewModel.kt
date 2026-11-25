@@ -7,6 +7,8 @@ import com.example.studentbudget.data.Expense
 import com.example.studentbudget.data.ExpenseCategory
 import com.example.studentbudget.data.ExpenseRepository
 import com.example.studentbudget.data.settings.SettingsRepository
+import com.example.studentbudget.data.settings.BudgetSettings
+import com.example.studentbudget.data.settings.ExpenseSort
 import java.time.LocalDate
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -18,6 +20,14 @@ class BudgetViewModel(
     private val repository: ExpenseRepository,
     val settingsRepository: SettingsRepository
 ) : ViewModel() {
+    val settings: StateFlow<BudgetSettings> = settingsRepository.settings.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = BudgetSettings()
+    )
+
+    suspend fun setExpenseSort(sort: ExpenseSort) = settingsRepository.setExpenseSort(sort)
+
     val expenses: StateFlow<List<Expense>> = repository.expenses.stateIn(
         scope = viewModelScope,
         started = SharingStarted.Eagerly,
