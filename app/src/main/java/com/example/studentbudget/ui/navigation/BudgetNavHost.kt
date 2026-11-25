@@ -54,8 +54,9 @@ internal fun BudgetNavHost(viewModel: BudgetViewModel) {
             arguments = listOf(navArgument(BudgetRoutes.EXPENSE_ID) { type = NavType.IntType })
         ) { entry ->
             val expenseId = entry.arguments?.getInt(BudgetRoutes.EXPENSE_ID)
+            val expenses by viewModel.expenses.collectAsStateWithLifecycle()
             ExpenseDetailsScreen(
-                expense = expenseId?.let(viewModel::findExpenseById),
+                expense = expenses.firstOrNull { it.id == expenseId },
                 onBack = { navController.popBackStack(BudgetRoutes.EXPENSES, inclusive = false) }
             )
         }

@@ -1,32 +1,35 @@
 package com.example.studentbudget.data
 
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertThrows
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ExpenseValidationTest {
-    @Test fun blankNameIsRejected() {
-        val repository = ExpenseRepository()
+    private val repository = ExpenseRepository(FakeExpenseDao())
+
+    @Test fun blankNameIsRejected() = runBlocking {
         assertThrows(IllegalArgumentException::class.java) {
-            repository.addExpense("  ", 1500, ExpenseCategory.FOOD)
+            runBlocking { repository.addExpense("  ", 1500, ExpenseCategory.FOOD) }
         }
-        assertEquals(2, repository.expenses.value.size)
+        assertTrue(repository.expenses.first().isEmpty())
     }
 
-    @Test fun zeroAndNegativeAmountsAreRejected() {
-        val repository = ExpenseRepository()
+    @Test fun zeroAndNegativeAmountsAreRejected() = runBlocking {
         for (amount in listOf(0, -1)) {
             assertThrows(IllegalArgumentException::class.java) {
-                repository.addExpense("Lunch", amount, ExpenseCategory.FOOD)
+                runBlocking { repository.addExpense("Lunch", amount, ExpenseCategory.FOOD) }
             }
         }
-        assertEquals(2, repository.expenses.value.size)
+        assertTrue(repository.expenses.first().isEmpty())
     }
 
-    @Test fun titleIsTrimmedAndMissingIdReturnsNull() {
-        val repository = ExpenseRepository()
+    @Test fun titleIsTrimmedAndMissingIdReturnsNull() = runBlocking {
         val lunch = repository.addExpense("  Lunch  ", 1500, ExpenseCategory.FOOD)
         assertEquals("Lunch", lunch.title)
-        assertEquals(null, repository.findById(-123))
+        assertNull(repository.findById(-123))
     }
 }
