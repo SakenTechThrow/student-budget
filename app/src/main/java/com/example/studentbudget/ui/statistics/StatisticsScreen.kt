@@ -2,7 +2,7 @@ package com.example.studentbudget.ui.statistics
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -25,6 +25,7 @@ import java.util.Locale
 
 @Composable
 internal fun StatisticsScreen(summaries: MonthSummaries) {
+    val monthFormatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH)
     var showPrevious by rememberSaveable { mutableStateOf(false) }
     val month = if (showPrevious) summaries.month.minusMonths(1) else summaries.month
     val statistics = if (showPrevious) summaries.previous else summaries.current
@@ -39,7 +40,7 @@ internal fun StatisticsScreen(summaries: MonthSummaries) {
                 modifier = Modifier.semantics { heading() },
                 style = MaterialTheme.typography.headlineMedium
             )
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 FilterChip(
                     selected = !showPrevious,
                     onClick = { showPrevious = false },
@@ -53,7 +54,7 @@ internal fun StatisticsScreen(summaries: MonthSummaries) {
             }
         }
         item {
-            Text(month.format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH)))
+            Text(month.format(monthFormatter))
             Text(formatTenge(statistics.total), style = MaterialTheme.typography.headlineSmall)
             Text("Total spent")
         }
@@ -64,6 +65,7 @@ internal fun StatisticsScreen(summaries: MonthSummaries) {
                 Text("Largest expense", style = MaterialTheme.typography.titleMedium)
                 val largest = statistics.largestExpense
                 Text(largest.title)
+                Text(largest.category.displayName, style = MaterialTheme.typography.bodyMedium)
                 Text(formatTenge(largest.amount.toLong()))
             }
             item { Text("Spending by category", style = MaterialTheme.typography.titleMedium) }
