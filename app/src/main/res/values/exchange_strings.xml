@@ -4,4 +4,6 @@
     <string name="exchange_empty">No exchange rates are available right now.</string>
     <string name="exchange_error">Could not load exchange rates. Check your connection and try again.</string>
     <string name="exchange_retry">Retry</string>
+    <string name="exchange_rate_value">1 %1$s = %2$s ₸</string>
+    <string name="exchange_rate_date">Rate date: %1$s</string>
 </resources>
