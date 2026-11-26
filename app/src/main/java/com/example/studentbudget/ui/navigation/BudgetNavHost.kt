@@ -1,93 +1,70 @@
 package com.example.studentbudget.ui.navigation
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavType
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.studentbudget.R
 import com.example.studentbudget.data.ExpenseCategory
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import com.example.studentbudget.data.settings.ExpenseSort
-import com.example.studentbudget.ui.addexpense.AddExpenseScreen
 import com.example.studentbudget.ui.addexpense.ExpenseEditorScreen
+import com.example.studentbudget.ui.expenses.categoryTotals
+import com.example.studentbudget.ui.expenses.visibleExpenses
+import kotlinx.coroutines.launch
 import com.example.studentbudget.ui.details.ExpenseDetailsScreen
 import com.example.studentbudget.ui.exchange.ExchangeRatesRoute
 import com.example.studentbudget.ui.exchange.ExchangeRatesViewModel
 import com.example.studentbudget.ui.expenses.ExpenseListItem
 import com.example.studentbudget.ui.expenses.ExpenseListScreen
-import com.example.studentbudget.ui.expenses.categoryTotals
-import com.example.studentbudget.ui.expenses.visibleExpenses
+import com.example.studentbudget.ui.expenses.MonthlyBudgetCard
+import com.example.studentbudget.ui.profile.MonthlyBudget
+import com.example.studentbudget.ui.profile.ProfileScreen
+import com.example.studentbudget.ui.statistics.StatisticsScreen
 import com.example.studentbudget.viewmodel.BudgetViewModel
-import kotlinx.coroutines.launch
-
-private enum class BudgetTab(val route: String, val label: Int, val icon: Int) {
-    Expenses(BudgetRoutes.EXPENSES, R.string.expenses_tab, R.drawable.ic_expenses),
-    ExchangeRates(BudgetRoutes.EXCHANGE_RATES, R.string.exchange_rates, R.drawable.ic_exchange)
-}
 
 @Composable
 internal fun BudgetNavHost(
     viewModel: BudgetViewModel,
-    exchangeRatesViewModel: ExchangeRatesViewModel
+    exchangeRatesViewModel: () -> ExchangeRatesViewModel
 ) {
     val navController = rememberNavController()
-    val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = backStackEntry?.destination?.route
-
+    val entry by navController.currentBackStackEntryAsState()
+    val tab = BudgetTab.entries.firstOrNull { it.route == entry?.destination?.route }
     Scaffold(
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
-            if (BudgetTab.entries.any { it.route == currentRoute }) {
-                NavigationBar {
-                    BudgetTab.entries.forEach { tab ->
-                        NavigationBarItem(
-                            selected = currentRoute == tab.route,
-                            onClick = {
-                                if (currentRoute != tab.route) {
-                                    navController.navigate(tab.route) {
-                                        popUpTo(BudgetRoutes.EXPENSES) { saveState = true }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
-                                }
-                            },
-                            icon = { Icon(painterResource(tab.icon), contentDescription = null) },
-                            label = { Text(stringResource(tab.label)) }
-                        )
+            if (tab != null) {
+                BudgetBottomBar(tab) { target ->
+                    navController.navigate(target.route) {
+                        popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                        launchSingleTop = true
+                        restoreState = true
                     }
                 }
             }
         }
-    ) { padding ->
+    ) { insets ->
         NavHost(
             navController = navController,
             startDestination = BudgetRoutes.EXPENSES,
-            modifier = Modifier.padding(padding).consumeWindowInsets(padding)
+            modifier = Modifier.padding(insets).consumeWindowInsets(insets)
         ) {
             composable(BudgetRoutes.EXPENSES) {
                 val expenses by viewModel.expenses.collectAsStateWithLifecycle()
                 val total by viewModel.totalAmount.collectAsStateWithLifecycle()
+                val summaries by viewModel.monthlyStatistics.collectAsStateWithLifecycle()
                 val settings by viewModel.settings.collectAsStateWithLifecycle()
                 var categoryName by rememberSaveable { mutableStateOf<String?>(null) }
                 val selectedCategory = ExpenseCategory.entries.firstOrNull { it.displayName == categoryName }
@@ -111,8 +88,25 @@ internal fun BudgetNavHost(
                     selectedCategory = categoryName,
                     onCategorySelected = { categoryName = it },
                     sort = settings.expenseSort,
-                    onSortChange = { sort: ExpenseSort -> scope.launch { viewModel.setExpenseSort(sort) } }
+                    onSortChange = { sort: ExpenseSort -> scope.launch { viewModel.setExpenseSort(sort) } },
+                    monthlyBudget = { MonthlyBudgetCard(MonthlyBudget(summaries.current.total, settings.monthlyLimit)) }
                 )
+            }
+            composable(BudgetRoutes.STATISTICS) {
+                val summaries by viewModel.monthlyStatistics.collectAsStateWithLifecycle()
+                StatisticsScreen(summaries)
+            }
+            composable(BudgetRoutes.PROFILE) {
+                val settings by viewModel.settings.collectAsStateWithLifecycle()
+                ProfileScreen(
+                    settings = settings,
+                    onSaveName = viewModel.settingsRepository::setProfileName,
+                    onSaveTheme = viewModel.settingsRepository::setTheme,
+                    onSaveLimit = viewModel.settingsRepository::setMonthlyLimit
+                )
+            }
+            composable(BudgetRoutes.EXCHANGE_RATES) {
+                ExchangeRatesRoute(exchangeRatesViewModel())
             }
             composable(BudgetRoutes.ADD_EXPENSE) {
                 val categories = ExpenseCategory.entries.associateBy(ExpenseCategory::displayName)
@@ -172,11 +166,6 @@ internal fun BudgetNavHost(
                         },
                         onBack = { navController.popBackStack() }
                     )
-                }
-            }
-            composable(BudgetRoutes.EXCHANGE_RATES) {
-                Box(Modifier.safeDrawingPadding()) {
-                    ExchangeRatesRoute(exchangeRatesViewModel)
                 }
             }
         }

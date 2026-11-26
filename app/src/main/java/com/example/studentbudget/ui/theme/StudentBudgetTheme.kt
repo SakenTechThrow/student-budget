@@ -6,6 +6,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import com.example.studentbudget.data.settings.BudgetTheme
 
 private val LightColors = lightColorScheme(
     primary = Color(0xFF23664F),
@@ -20,7 +21,15 @@ private val DarkColors = darkColorScheme(
 )
 
 @Composable
-fun StudentBudgetTheme(content: @Composable () -> Unit) {
-    val colors = if (isSystemInDarkTheme()) DarkColors else LightColors
+fun StudentBudgetTheme(
+    theme: BudgetTheme = BudgetTheme.SYSTEM,
+    content: @Composable () -> Unit
+) {
+    val darkTheme = when (theme) {
+        BudgetTheme.SYSTEM -> isSystemInDarkTheme()
+        BudgetTheme.LIGHT -> false
+        BudgetTheme.DARK -> true
+    }
+    val colors = if (darkTheme) DarkColors else LightColors
     MaterialTheme(colorScheme = colors, content = content)
 }

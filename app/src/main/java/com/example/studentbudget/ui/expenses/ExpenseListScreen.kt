@@ -40,7 +40,8 @@ fun ExpenseListScreen(
     selectedCategory: String? = null,
     onCategorySelected: (String?) -> Unit = {},
     sort: ExpenseSort = ExpenseSort.NEWEST_FIRST,
-    onSortChange: (ExpenseSort) -> Unit = {}
+    onSortChange: (ExpenseSort) -> Unit = {},
+    monthlyBudget: (@Composable () -> Unit)? = null
 ) {
     Scaffold { insets ->
         LazyColumn(
@@ -56,6 +57,7 @@ fun ExpenseListScreen(
                 )
             }
             item { TotalSpentCard(total) }
+            if (monthlyBudget != null) item { monthlyBudget() }
             if (categorySummary.isNotEmpty()) {
                 item {
                     Text("Categories", style = MaterialTheme.typography.titleMedium)

@@ -4,7 +4,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.luminance
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.studentbudget.data.ExpenseRepository
@@ -29,11 +35,20 @@ class MainActivity : ComponentActivity() {
             }
         }
         val viewModel = ViewModelProvider(this, factory)[BudgetViewModel::class.java]
-        val exchangeRatesViewModel = ViewModelProvider(this, ExchangeRatesViewModel.factory)
-            .get(ExchangeRatesViewModel::class.java)
+        val exchangeRatesViewModel by lazy {
+            ViewModelProvider(this, ExchangeRatesViewModel.factory)[ExchangeRatesViewModel::class.java]
+        }
         setContent {
-            StudentBudgetTheme {
-                BudgetNavHost(viewModel, exchangeRatesViewModel)
+            val settings by viewModel.settings.collectAsStateWithLifecycle()
+            StudentBudgetTheme(theme = settings.theme) {
+                val lightBackground = MaterialTheme.colorScheme.background.luminance() > 0.5f
+                SideEffect {
+                    WindowCompat.getInsetsController(window, window.decorView).apply {
+                        isAppearanceLightStatusBars = lightBackground
+                        isAppearanceLightNavigationBars = lightBackground
+                    }
+                }
+                BudgetNavHost(viewModel) { exchangeRatesViewModel }
             }
         }
     }

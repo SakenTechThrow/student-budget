@@ -6,9 +6,14 @@ import androidx.lifecycle.viewModelScope
 import com.example.studentbudget.data.Expense
 import com.example.studentbudget.data.ExpenseCategory
 import com.example.studentbudget.data.ExpenseRepository
-import com.example.studentbudget.data.settings.SettingsRepository
 import com.example.studentbudget.data.settings.BudgetSettings
 import com.example.studentbudget.data.settings.ExpenseSort
+import com.example.studentbudget.data.settings.SettingsRepository
+import com.example.studentbudget.ui.statistics.MonthlyStatistics
+import com.example.studentbudget.ui.statistics.calendarMonths
+import com.example.studentbudget.ui.statistics.statisticsFor
+import java.time.YearMonth
+import kotlinx.coroutines.flow.combine
 import java.time.LocalDate
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -20,14 +25,6 @@ class BudgetViewModel(
     private val repository: ExpenseRepository,
     val settingsRepository: SettingsRepository
 ) : ViewModel() {
-    val settings: StateFlow<BudgetSettings> = settingsRepository.settings.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.Eagerly,
-        initialValue = BudgetSettings()
-    )
-
-    suspend fun setExpenseSort(sort: ExpenseSort) = settingsRepository.setExpenseSort(sort)
-
     val expenses: StateFlow<List<Expense>> = repository.expenses.stateIn(
         scope = viewModelScope,
         started = SharingStarted.Eagerly,
@@ -41,6 +38,25 @@ class BudgetViewModel(
         started = SharingStarted.Eagerly,
         initialValue = 0L
     )
+
+    val settings = settingsRepository.settings.stateIn(
+        viewModelScope, SharingStarted.Eagerly, BudgetSettings()
+    )
+
+    private val initialMonth = YearMonth.now()
+    private val currentMonth = calendarMonths().stateIn(
+        viewModelScope, SharingStarted.Eagerly, initialMonth
+    )
+    internal val monthlyStatistics = combine(expenses, currentMonth) { entries, month ->
+        MonthSummaries(month, entries.statisticsFor(month), entries.statisticsFor(month.minusMonths(1)))
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.Eagerly,
+        MonthSummaries(initialMonth, emptyList<Expense>().statisticsFor(initialMonth),
+            emptyList<Expense>().statisticsFor(initialMonth.minusMonths(1)))
+    )
+
+    suspend fun setExpenseSort(sort: ExpenseSort) = settingsRepository.setExpenseSort(sort)
 
     suspend fun deleteExpense(id: Int): Boolean = try {
         repository.deleteExpense(id)
@@ -77,3 +93,9 @@ class BudgetViewModel(
         }
     }
 }
+
+internal data class MonthSummaries(
+    val month: YearMonth,
+    val current: MonthlyStatistics,
+    val previous: MonthlyStatistics
+)

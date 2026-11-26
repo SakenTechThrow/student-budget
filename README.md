@@ -36,3 +36,19 @@ Student Budget is a Kotlin and Jetpack Compose app for tracking student expenses
 4. Open **Lunch** and verify **Food** and **1 500 ₸**. Force-stop and reopen the app, then confirm that the same item and total are still present.
 
 Run the unit tests, build, and lint with `./gradlew :app:testDebugUnitTest :app:assembleDebug :app:lintDebug`.
+
+### Statistics and Profile
+
+Statistics reads purchase dates from the same Room expense stream as Expenses.
+Switch between This month and Last month to see the total, largest expense, and
+category shares. The Expenses budget card uses the current-month total from the
+same calculation.
+
+Profile saves the display name, theme, and monthly limit to Preferences
+DataStore. Clear the limit and select Save limit to disable it. The budget
+card reports a warning at 80%, a reached state at 100%, and the overage above
+100%. The limit persists as the calendar month changes.
+
+The Exchange rates tab fetches USD and EUR quotes in KZT from Frankfurter v2.
+It shows available rates and dates, supports retry, and converts positive
+amounts using the loaded quote.
