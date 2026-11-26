@@ -23,11 +23,12 @@ android {
 }
 
 dependencies {
+    testImplementation("junit:junit:4.13.2")
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.retrofit)
+    implementation(libs.retrofit.core)
     implementation(libs.retrofit.converter.gson)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.material3)

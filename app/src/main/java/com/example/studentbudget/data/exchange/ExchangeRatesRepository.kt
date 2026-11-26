@@ -4,11 +4,13 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 
-internal class ExchangeRatesRepository(private val api: FrankfurterApi) {
+internal class ExchangeRatesRepository(
+    private val fetchRates: suspend (String) -> List<FrankfurterRate>
+) {
     suspend fun loadRates(): List<ExchangeRate> = coroutineScope {
         ExchangeCurrency.entries.map { currency ->
             async {
-                api.getRates(currency.name).mapNotNull { rate ->
+                fetchRates(currency.name).mapNotNull { rate ->
                     rate.toExchangeRate(currency)
                 }.maxByOrNull { it.date }
             }

@@ -11,6 +11,6 @@ internal object ExchangeRateNetwork {
             .build()
             .create(FrankfurterApi::class.java)
 
-        ExchangeRatesRepository(api)
+        ExchangeRatesRepository(api::getRates)
     }
 }
