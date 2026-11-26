@@ -6,4 +6,7 @@
     <string name="exchange_retry">Retry</string>
     <string name="exchange_rate_value">1 %1$s = %2$s ₸</string>
     <string name="exchange_rate_date">Rate date: %1$s</string>
+    <string name="exchange_converter">Currency converter</string>
+    <string name="exchange_amount">Amount in %1$s</string>
+    <string name="exchange_result">%1$s ₸</string>
 </resources>

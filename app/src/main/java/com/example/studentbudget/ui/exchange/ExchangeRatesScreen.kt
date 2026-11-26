@@ -65,6 +65,7 @@ private fun ExchangeRatesScreen(state: ExchangeRatesState, onRetry: () -> Unit) 
             }
             is ExchangeRatesState.Success -> {
                 state.rates.forEach { RateCard(it) }
+                CurrencyConverter(state.rates)
             }
         }
     }
