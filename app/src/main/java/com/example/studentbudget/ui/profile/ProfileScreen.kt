@@ -26,13 +26,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.studentbudget.data.settings.BudgetSettings
+import com.example.studentbudget.data.settings.BudgetTheme
 import java.io.IOException
 import kotlinx.coroutines.launch
 
 @Composable
 internal fun ProfileScreen(
     settings: BudgetSettings,
-    onSaveName: suspend (String) -> Unit
+    onSaveName: suspend (String) -> Unit,
+    onSaveTheme: suspend (BudgetTheme) -> Unit
 ) {
     var nameDraft by rememberSaveable(settings.profileName) { mutableStateOf(settings.profileName) }
     var nameError by rememberSaveable { mutableStateOf(false) }
@@ -88,5 +90,6 @@ internal fun ProfileScreen(
                 ) { Text("Save name") }
             }
         }
+        item { ThemeOptions(settings.theme, onSaveTheme) }
     }
 }
