@@ -1,0 +1,7 @@
+<resources>
+    <string name="exchange_rates">Exchange rates</string>
+    <string name="exchange_loading">Loading exchange rates…</string>
+    <string name="exchange_empty">No exchange rates are available right now.</string>
+    <string name="exchange_error">Could not load exchange rates. Check your connection and try again.</string>
+    <string name="exchange_retry">Retry</string>
+</resources>
