@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.MaterialTheme
@@ -33,7 +35,7 @@ internal fun ThemeOptions(theme: BudgetTheme, onSelect: suspend (BudgetTheme) ->
         Text("Theme", style = MaterialTheme.typography.titleMedium)
         BudgetTheme.entries.forEach { option ->
             Row(
-                modifier = Modifier.fillMaxWidth().selectable(
+                modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).selectable(
                     selected = option == theme,
                     enabled = !saving,
                     role = Role.RadioButton,
@@ -50,7 +52,8 @@ internal fun ThemeOptions(theme: BudgetTheme, onSelect: suspend (BudgetTheme) ->
                             }
                         }
                     }
-                ),
+                ).padding(horizontal = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 RadioButton(selected = option == theme, onClick = null)
