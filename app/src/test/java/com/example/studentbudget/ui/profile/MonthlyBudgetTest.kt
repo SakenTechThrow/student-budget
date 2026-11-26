@@ -26,4 +26,13 @@ class MonthlyBudgetTest {
         }
         assertEquals("АК", profileInitials("  Айдын   Керембек "))
     }
+
+    @Test
+    fun warnsAtTheFirstWholeTengeAtOrAboveEightyPercent() {
+        val threshold = Long.MAX_VALUE - Long.MAX_VALUE / 5
+        assertEquals(BudgetStatus.WITHIN_LIMIT, MonthlyBudget(threshold - 1, Long.MAX_VALUE).status)
+        assertEquals(BudgetStatus.NEAR_LIMIT, MonthlyBudget(threshold, Long.MAX_VALUE).status)
+        assertEquals(BudgetStatus.REACHED, MonthlyBudget(Long.MAX_VALUE, Long.MAX_VALUE).status)
+        assertEquals(Long.MAX_VALUE, Long.MAX_VALUE.toString().toMonthlyLimit())
+    }
 }

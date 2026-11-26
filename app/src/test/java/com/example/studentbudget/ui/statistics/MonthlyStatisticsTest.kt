@@ -29,4 +29,18 @@ class MonthlyStatisticsTest {
         assertEquals(0L, empty.total)
         assertNull(empty.largestExpense)
     }
+
+    @Test
+    fun totalsBeyondIntRangeAndSelectsLargestByIdWhenAmountsMatch() {
+        val month = YearMonth.of(2026, 11)
+        val first = Expense(1, "Laptop", Int.MAX_VALUE, ExpenseCategory.EDUCATION, month.atDay(1))
+        val second = first.copy(id = 2, title = "Equipment")
+        val old = first.copy(id = 3, purchaseDate = month.minusYears(1).atDay(1))
+
+        val statistics = listOf(second, old, first).statisticsFor(month)
+
+        assertEquals(4_294_967_294L, statistics.total)
+        assertEquals(listOf(ExpenseCategory.EDUCATION to 4_294_967_294L), statistics.categories)
+        assertEquals(second, statistics.largestExpense)
+    }
 }
