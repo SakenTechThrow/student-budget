@@ -7,6 +7,8 @@ import com.example.studentbudget.data.Expense
 import com.example.studentbudget.data.ExpenseCategory
 import com.example.studentbudget.data.ExpenseRepository
 import com.example.studentbudget.data.settings.SettingsRepository
+import com.example.studentbudget.data.settings.BudgetSettings
+import com.example.studentbudget.data.settings.ExpenseSort
 import java.time.LocalDate
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -18,6 +20,14 @@ class BudgetViewModel(
     private val repository: ExpenseRepository,
     val settingsRepository: SettingsRepository
 ) : ViewModel() {
+    val settings: StateFlow<BudgetSettings> = settingsRepository.settings.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = BudgetSettings()
+    )
+
+    suspend fun setExpenseSort(sort: ExpenseSort) = settingsRepository.setExpenseSort(sort)
+
     val expenses: StateFlow<List<Expense>> = repository.expenses.stateIn(
         scope = viewModelScope,
         started = SharingStarted.Eagerly,
@@ -31,6 +41,22 @@ class BudgetViewModel(
         started = SharingStarted.Eagerly,
         initialValue = 0L
     )
+
+    suspend fun deleteExpense(id: Int): Boolean = try {
+        repository.deleteExpense(id)
+    } catch (_: SQLiteException) {
+        false
+    }
+
+    suspend fun updateExpense(expense: Expense): String? {
+        if (expense.title.isBlank()) return "Enter an expense title"
+        if (expense.amount <= 0) return "Amount must be greater than zero"
+        return try {
+            if (repository.updateExpense(expense)) null else "Expense no longer exists"
+        } catch (_: SQLiteException) {
+            "Could not update the expense. Try again."
+        }
+    }
 
     /** Returns null on success, otherwise an error message for the form. */
     suspend fun addExpense(
