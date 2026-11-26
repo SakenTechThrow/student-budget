@@ -23,7 +23,8 @@ fun ExpenseListScreen(
     expenses: List<ExpenseListItem>,
     onAddExpense: () -> Unit,
     onExpenseClick: (Int) -> Unit,
-    total: Long = expenses.sumOf { it.amount.toLong() }
+    total: Long = expenses.sumOf { it.amount.toLong() },
+    monthlyBudget: (@Composable () -> Unit)? = null
 ) {
     Scaffold { insets ->
         LazyColumn(
@@ -39,6 +40,7 @@ fun ExpenseListScreen(
                 )
             }
             item { TotalSpentCard(total) }
+            if (monthlyBudget != null) item { monthlyBudget() }
             if (expenses.isEmpty()) {
                 item {
                     Text(stringResource(R.string.no_expenses), style = MaterialTheme.typography.bodyLarge)
