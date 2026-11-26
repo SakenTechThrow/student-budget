@@ -10,10 +10,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -27,9 +23,13 @@ import com.example.studentbudget.data.exchange.ExchangeCurrency
 import com.example.studentbudget.data.exchange.ExchangeRate
 
 @Composable
-internal fun CurrencyConverter(rates: List<ExchangeRate>) {
-    var currency by rememberSaveable { mutableStateOf(ExchangeCurrency.USD) }
-    var amount by rememberSaveable { mutableStateOf("") }
+internal fun CurrencyConverter(
+    rates: List<ExchangeRate>,
+    currency: ExchangeCurrency,
+    onCurrencyChange: (ExchangeCurrency) -> Unit,
+    amount: String,
+    onAmountChange: (String) -> Unit
+) {
     val selectedRate = rates.firstOrNull { it.currency == currency } ?: rates.first()
     val converted = convertToTenge(amount, selectedRate.kztPerUnit)
 
@@ -43,14 +43,14 @@ internal fun CurrencyConverter(rates: List<ExchangeRate>) {
             rates.forEach { rate ->
                 FilterChip(
                     selected = rate.currency == selectedRate.currency,
-                    onClick = { currency = rate.currency },
+                    onClick = { onCurrencyChange(rate.currency) },
                     label = { Text(rate.currency.name) }
                 )
             }
         }
         OutlinedTextField(
             value = amount,
-            onValueChange = { amount = it },
+            onValueChange = onAmountChange,
             label = { Text(stringResource(R.string.exchange_amount, selectedRate.currency.name)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
