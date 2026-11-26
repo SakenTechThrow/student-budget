@@ -34,7 +34,8 @@ import kotlinx.coroutines.launch
 internal fun ProfileScreen(
     settings: BudgetSettings,
     onSaveName: suspend (String) -> Unit,
-    onSaveTheme: suspend (BudgetTheme) -> Unit
+    onSaveTheme: suspend (BudgetTheme) -> Unit,
+    onSaveLimit: suspend (Long?) -> Unit
 ) {
     var nameDraft by rememberSaveable(settings.profileName) { mutableStateOf(settings.profileName) }
     var nameError by rememberSaveable { mutableStateOf(false) }
@@ -63,7 +64,10 @@ internal fun ProfileScreen(
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(
                     value = nameDraft,
-                    onValueChange = { nameDraft = it; nameError = false },
+                    onValueChange = {
+                        nameDraft = it
+                        nameError = false
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     label = { Text("Name") },
                     singleLine = true,
@@ -91,5 +95,6 @@ internal fun ProfileScreen(
             }
         }
         item { ThemeOptions(settings.theme, onSaveTheme) }
+        item { MonthlyLimitEditor(settings.monthlyLimit, onSaveLimit) }
     }
 }
