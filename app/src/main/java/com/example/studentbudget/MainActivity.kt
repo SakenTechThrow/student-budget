@@ -10,6 +10,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.studentbudget.data.ExpenseRepository
 import com.example.studentbudget.data.local.BudgetDatabase
 import com.example.studentbudget.data.settings.SettingsRepository
+import com.example.studentbudget.ui.exchange.ExchangeRatesViewModel
 import com.example.studentbudget.ui.navigation.BudgetNavHost
 import com.example.studentbudget.ui.theme.StudentBudgetTheme
 import com.example.studentbudget.viewmodel.BudgetViewModel
@@ -28,9 +29,11 @@ class MainActivity : ComponentActivity() {
             }
         }
         val viewModel = ViewModelProvider(this, factory)[BudgetViewModel::class.java]
+        val exchangeRatesViewModel = ViewModelProvider(this, ExchangeRatesViewModel.factory)
+            .get(ExchangeRatesViewModel::class.java)
         setContent {
             StudentBudgetTheme {
-                BudgetNavHost(viewModel)
+                BudgetNavHost(viewModel, exchangeRatesViewModel)
             }
         }
     }
